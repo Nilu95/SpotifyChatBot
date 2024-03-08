@@ -6,14 +6,14 @@ const client_secret = "74d6862034ff450fa04e945de09a1adc";
 const redirect_uri = "http://localhost:3000/";
 
 const scope =
-   "user-read-private user-read-email user-modify-playback-state user-read-playback-position user-library-read streaming user-read-playback-state user-read-recently-played playlist-read-private";
+  "user-read-private user-read-email user-modify-playback-state user-read-playback-position user-library-read streaming user-read-playback-state user-read-recently-played playlist-read-private";
 
 const requestAuth = async () => {
-   const AUTHORIZE = "https://accounts.spotify.com/authorize";
+  const AUTHORIZE = "https://accounts.spotify.com/authorize";
 
-   let url = `${AUTHORIZE}?client_id=${client_id}&response_type=code&redirect_uri=${redirect_uri}&scope=${scope}`;
+  let url = `${AUTHORIZE}?client_id=${client_id}&response_type=code&redirect_uri=${redirect_uri}&scope=${scope}`;
 
-   redirect(url);
+  redirect(url);
 };
 
 export default requestAuth;
