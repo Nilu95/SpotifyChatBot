@@ -13,7 +13,7 @@ const skipSong = async (access_token) => {
    // const data = await response.json();
    // console.log(response);
    console.log(access_token);
-   // console.log(fetchConfig);
+   console.log(fetchConfig);
    //console.log(data, "\n");
 };
 
