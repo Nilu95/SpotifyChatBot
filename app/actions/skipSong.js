@@ -1,11 +1,15 @@
 "use server";
 
-// CLIENT CREDENTIALS
-const client_id = "9224009bb2c14b40886767141ffec1ad";
-const client_secret = "74d6862034ff450fa04e945de09a1adc";
+const skipSong = async (access_token) => {
+   const response = await fetch("https://api.spotify.com/v1/me/player/next", {
+      method: "POST",
+      headers: {
+         Authorization: "Bearer " + access_token.value,
+      },
+   });
 
-const skipSong = async (token) => {
-   // TODO
+   const data = await response.json();
+   console.log(data);
 };
 
 export default skipSong;

@@ -6,7 +6,8 @@ import requestAuth from "./actions/requestAuth";
 
 const ClientComponent = () => {
    const [isPending, startTransition] = useTransition();
-   const [token, setToken] = useState(null);
+   const [token, setToken] = useState("null");
+   const [code, setCode] = useState("code");
 
    useEffect(() => {
       // Function to extract code from URL and call fetchToken
@@ -14,22 +15,15 @@ const ClientComponent = () => {
          const urlParams = new URLSearchParams(window.location.search);
          const code = urlParams.get("code");
          if (code) {
-            // If code exists in the URL, fetch token
-            startTransition(() => {
-               fetchToken(code)
-                  .then((token) => {
-                     setToken(token);
-                  })
-                  .catch((error) => {
-                     console.error("Error fetching token:", error);
-                  });
-            });
+            setCode(code);
          }
       };
-
-      // Call the function when component mounts
       getCodeFromURL();
-   }, []); // Empty dependency array to run only once when component mounts
+   }, [code]); // Empty dependency array to run only once when component mounts
+
+   useEffect(() => {
+      setToken(fetchToken(code));
+   }, [code]);
 
    function onAuthClick() {
       startTransition(() => {
@@ -48,7 +42,16 @@ const ClientComponent = () => {
          >
             Request Auth
          </button>
+         <button
+            type="button"
+            onClick={() => {
+               skipSong(token);
+            }}
+         >
+            SKIP SONG
+         </button>
          <h1>Token: {token}</h1>
+         <h1>Code: {code}</h1>
       </>
    );
 };
