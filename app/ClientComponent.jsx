@@ -3,6 +3,7 @@ import React, { useEffect, useTransition, useState } from "react";
 import fetchToken from "./actions/fetchToken";
 import skipSong from "./actions/skipSong";
 import requestAuth from "./actions/requestAuth";
+import fetchSongData from "./actions/fetchSongData";
 
 const ClientComponent = () => {
    const [isPending, startTransition] = useTransition();
@@ -22,7 +23,14 @@ const ClientComponent = () => {
    }, [code]); // Empty dependency array to run only once when component mounts
 
    useEffect(() => {
-      setToken(fetchToken(code));
+      const fetchTokenAndUpdate = async () => {
+         if (code) {
+            const token = await fetchToken(code);
+            setToken(token);
+         }
+      };
+
+      fetchTokenAndUpdate();
    }, [code]);
 
    function onAuthClick() {
@@ -44,11 +52,21 @@ const ClientComponent = () => {
          </button>
          <button
             type="button"
+            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
             onClick={() => {
                skipSong(token);
             }}
          >
             SKIP SONG
+         </button>
+         <button
+            type="button"
+            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+            onClick={() => {
+               fetchSongData(token);
+            }}
+         >
+            FETCH SONG DATA
          </button>
          <h1>Token: {token}</h1>
          <h1>Code: {code}</h1>
