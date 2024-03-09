@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useTransition, useState } from "react";
 import fetchToken from "./actions/fetchToken";
 import skipSong from "./actions/skipSong";
@@ -7,11 +8,13 @@ import fetchSongData from "./actions/fetchSongData";
 
 const ClientComponent = () => {
    const [isPending, startTransition] = useTransition();
-   const [token, setToken] = useState("null");
-   const [code, setCode] = useState("code");
+   const [token, setToken] = useState(null);
+   const [code, setCode] = useState(null);
+   const [albumImage, setAlbumImage] = useState(null);
+   const [artistInfo, setArtistInfo] = useState(null);
+   const [songName, setSongName] = useState(null);
 
    useEffect(() => {
-      // Function to extract code from URL and call fetchToken
       const getCodeFromURL = () => {
          const urlParams = new URLSearchParams(window.location.search);
          const code = urlParams.get("code");
@@ -20,7 +23,8 @@ const ClientComponent = () => {
          }
       };
       getCodeFromURL();
-   }, [code]); // Empty dependency array to run only once when component mounts
+   }, [code]);
+
    useEffect(() => {
       const fetchTokenAndUpdate = async () => {
          if (code) {
@@ -32,13 +36,38 @@ const ClientComponent = () => {
       fetchTokenAndUpdate();
    }, [code]);
 
+   async function fetchSongData() {
+      const songData = await fetchSongData(token);
+      if (songData) {
+         const albumImageUrl = songData.item.album.images[0].url;
+         setAlbumImage(albumImageUrl);
+
+         const songName = songData.item.name;
+         setSongName(songName);
+
+         let artists = "";
+
+         for (let i = 0; i < songData.item.artists.length; i++) {
+            artists += songData.item.artists[i].name;
+            if (i < songData.item.artists.length - 1) {
+               artists += ", ";
+            }
+         }
+         setArtistInfo(artists);
+      }
+   }
+
    function onAuthClick() {
       startTransition(() => {
          requestAuth();
       });
    }
+
    return (
       <>
+         {albumImage && <img src={albumImage} alt="Album Cover" style={{ maxWidth: "300px" }} />}
+         {songName && <h1>{songName}</h1>}
+         {artistInfo && <h1>{artistInfo}</h1>}
          <button
             type="button"
             onClick={() => {
@@ -61,13 +90,11 @@ const ClientComponent = () => {
             type="button"
             className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
             onClick={() => {
-               fetchSongData(token);
+               fetchSongData();
             }}
          >
             FETCH SONG DATA
          </button>
-         <h1>Token: {token}</h1>
-         <h1>Code: {code}</h1>
       </>
    );
 };

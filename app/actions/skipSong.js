@@ -8,13 +8,14 @@ const skipSong = async (access_token) => {
       },
    };
 
-   const response = await fetch("https://api.spotify.com/v1/me/player/next", fetchConfig);
+   const response = await fetch("https://api.spotify.com/v1/me/player/next", {
+      method: "POST",
+      headers: {
+         Authorization: `Bearer ${access_token}`,
+      },
+   });
 
-   // const data = await response.json();
-   console.log(response);
-   console.log(access_token);
-   console.log(fetchConfig);
-   //console.log(data, "\n");
+   const data = await response.json();
 };
 
 export default skipSong;
