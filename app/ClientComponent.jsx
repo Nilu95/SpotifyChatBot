@@ -5,6 +5,8 @@ import fetchToken from "./actions/fetchToken";
 import skipSong from "./actions/skipSong";
 import requestAuth from "./actions/requestAuth";
 import fetchSongData from "./actions/fetchSongData";
+import previousSong from "./actions/previousSong";
+import togglePausePlay from "./actions/togglePausePlay";
 
 const ClientComponent = () => {
    const [isPending, startTransition] = useTransition();
@@ -13,24 +15,27 @@ const ClientComponent = () => {
    const [albumImage, setAlbumImage] = useState(null);
    const [artistInfo, setArtistInfo] = useState(null);
    const [songName, setSongName] = useState(null);
+   const [isPaused, setIsPaused] = useState(false); // New state variable for tracking pause/play
 
    useEffect(() => {
-      // Function to extract code from URL and call fetchToken
       const getCodeFromURL = () => {
          const urlParams = new URLSearchParams(window.location.search);
          const code = urlParams.get("code");
          if (code) {
+            sessionStorage.setItem("spotifyCode", code);
             setCode(code);
          }
       };
+
       getCodeFromURL();
-   }, [code]);
+   }, []);
 
    useEffect(() => {
       const fetchTokenAndUpdate = async () => {
          if (code) {
             const token = await fetchToken(code);
             setToken(token);
+            localStorage.setItem("spotifyToken", token);
          }
       };
 
@@ -38,16 +43,38 @@ const ClientComponent = () => {
    }, [code]);
 
    useEffect(() => {
-      // Call getSongData initially and then set up interval to call it periodically
-      getSongData();
-      const intervalId = setInterval(getSongData, 500);
+      // Check if token exists in local storage
+      const storedToken = localStorage.getItem("spotifyToken");
+      if (storedToken) {
+         setToken(storedToken);
+      }
+   }, []);
 
-      return () => clearInterval(intervalId); // Cleanup interval on component unmount
-   }, [token]); // Only trigger when the token changes
+   useEffect(() => {
+      const intervalId = setInterval(() => {
+         if (token) {
+            getSongData();
+         }
+      }, 500);
+
+      return () => clearInterval(intervalId);
+   }, [token]);
 
    async function getSongData() {
       const songData = await fetchSongData(token);
+
       if (songData) {
+         // Check if player is paused
+         setIsPaused(!songData.is_playing);
+      }
+
+      if (
+         songData &&
+         songData.item &&
+         songData.item.album &&
+         songData.item.album.images &&
+         songData.item.album.images.length > 0
+      ) {
          const albumImageUrl = songData.item.album.images[0].url;
          setAlbumImage(albumImageUrl);
 
@@ -56,13 +83,12 @@ const ClientComponent = () => {
 
          let artists = "";
 
-         for (let i = 0; i < songData.item.artists.length; i++) {
-            artists += songData.item.artists[i].name;
-            if (i < songData.item.artists.length - 1) {
-               // If this is not the last artist in the list, add a comma and a space
+         songData.item.artists.forEach((artist, index) => {
+            artists += artist.name;
+            if (index < songData.item.artists.length - 1) {
                artists += ", ";
             }
-         }
+         });
 
          setArtistInfo(artists);
       }
@@ -79,23 +105,35 @@ const ClientComponent = () => {
          {albumImage && <img src={albumImage} alt="Album Cover" style={{ maxWidth: "300px" }} />}
          {songName && <h1>{songName}</h1>}
          {artistInfo && <h1>{artistInfo}</h1>}
+         {!token && (
+            <button
+               type="button"
+               onClick={onAuthClick}
+               className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+            >
+               Request Auth
+            </button>
+         )}
          <button
             type="button"
-            onClick={() => {
-               onAuthClick();
-            }}
             className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+            onClick={() => togglePausePlay(token)}
          >
-            Request Auth
+            {isPaused ? "PLAY" : "PAUSE"}
          </button>
          <button
             type="button"
             className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-            onClick={() => {
-               skipSong(token);
-            }}
+            onClick={() => skipSong(token)}
          >
             SKIP SONG
+         </button>
+         <button
+            type="button"
+            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+            onClick={() => previousSong(token)}
+         >
+            PREVIOUS SONG
          </button>
       </>
    );
