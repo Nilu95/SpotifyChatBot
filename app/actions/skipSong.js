@@ -14,8 +14,6 @@ const skipSong = async (access_token) => {
          Authorization: `Bearer ${access_token}`,
       },
    });
-
-   const data = await response.json();
 };
 
 export default skipSong;

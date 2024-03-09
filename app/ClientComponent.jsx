@@ -37,6 +37,14 @@ const ClientComponent = () => {
       fetchTokenAndUpdate();
    }, [code]);
 
+   useEffect(() => {
+      // Call getSongData initially and then set up interval to call it periodically
+      getSongData();
+      const intervalId = setInterval(getSongData, 500);
+
+      return () => clearInterval(intervalId); // Cleanup interval on component unmount
+   }, [token]); // Only trigger when the token changes
+
    async function getSongData() {
       const songData = await fetchSongData(token);
       if (songData) {
