@@ -15,6 +15,7 @@ const ClientComponent = () => {
    const [songName, setSongName] = useState(null);
 
    useEffect(() => {
+      // Function to extract code from URL and call fetchToken
       const getCodeFromURL = () => {
          const urlParams = new URLSearchParams(window.location.search);
          const code = urlParams.get("code");
@@ -36,7 +37,7 @@ const ClientComponent = () => {
       fetchTokenAndUpdate();
    }, [code]);
 
-   async function fetchSongData() {
+   async function getSongData() {
       const songData = await fetchSongData(token);
       if (songData) {
          const albumImageUrl = songData.item.album.images[0].url;
@@ -50,9 +51,11 @@ const ClientComponent = () => {
          for (let i = 0; i < songData.item.artists.length; i++) {
             artists += songData.item.artists[i].name;
             if (i < songData.item.artists.length - 1) {
+               // If this is not the last artist in the list, add a comma and a space
                artists += ", ";
             }
          }
+
          setArtistInfo(artists);
       }
    }
@@ -90,7 +93,7 @@ const ClientComponent = () => {
             type="button"
             className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
             onClick={() => {
-               fetchSongData();
+               getSongData();
             }}
          >
             FETCH SONG DATA
