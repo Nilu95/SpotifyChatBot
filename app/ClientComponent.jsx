@@ -15,7 +15,7 @@ const ClientComponent = () => {
    const [albumImage, setAlbumImage] = useState(null);
    const [artistInfo, setArtistInfo] = useState(null);
    const [songName, setSongName] = useState(null);
-   const [isPaused, setIsPaused] = useState(false); // New state variable for tracking pause/play
+   const [isPaused, setIsPaused] = useState(false);
 
    useEffect(() => {
       const getCodeFromURL = () => {
