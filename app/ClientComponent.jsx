@@ -2,9 +2,7 @@
 
 import React, { useEffect, useTransition, useState } from "react";
 import fetchToken from "./actions/fetchToken";
-import skipSong from "./actions/skipSong";
 import fetchSongData from "./actions/fetchSongData";
-import previousSong from "./actions/previousSong";
 import AuthButton from "./components/AuthButton";
 import PausePlayButton from "./components/PausePlayButton";
 import SkipSongButton from "./components/SkipSongButton";
