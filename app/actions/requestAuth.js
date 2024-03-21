@@ -1,9 +1,9 @@
 "use server";
 import { redirect } from "next/navigation";
 
-const client_id = "9224009bb2c14b40886767141ffec1ad";
-const client_secret = "74d6862034ff450fa04e945de09a1adc";
-const redirect_uri = "http://localhost:3000/";
+const client_id = process.env.CLIENT_ID;
+const client_secret = process.env.CLIENT_SECRET;
+const redirect_uri = process.env.REDIRECT_URI;
 
 const scope =
    "user-read-private user-read-email user-modify-playback-state user-read-playback-position user-library-read streaming user-read-playback-state user-read-recently-played playlist-read-private";
