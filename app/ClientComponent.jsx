@@ -7,6 +7,8 @@ import AuthButton from "./components/AuthButton";
 import PausePlayButton from "./components/PausePlayButton";
 import SkipSongButton from "./components/SkipSongButton";
 import PreviousSongButton from "./components/PreviousSongButton";
+import OpenAI from "openai";
+import ChatWidget from "./components/ChatWidget";
 
 const ClientComponent = () => {
    const [token, setToken] = useState(null);
@@ -14,6 +16,25 @@ const ClientComponent = () => {
    const [albumImage, setAlbumImage] = useState(null);
    const [artistInfo, setArtistInfo] = useState(null);
    const [songName, setSongName] = useState(null);
+   const openai = new OpenAI({
+      apiKey: "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",
+      dangerouslyAllowBrowser: true,
+   });
+
+   async function sendChatMessage() {
+      const completion = await openai.chat.completions.create({
+         messages: [
+            {
+               role: "system",
+               content:
+                  "I'm calling you from the inside of a greater spotify project isn't that cool!?",
+            },
+         ],
+         model: "gpt-3.5-turbo",
+      });
+
+      console.log(completion.choices[0].message.content);
+   }
 
    useEffect(() => {
       const getCodeFromURL = () => {
@@ -96,6 +117,14 @@ const ClientComponent = () => {
          <PausePlayButton token={token} />
          <SkipSongButton token={token} />
          <PreviousSongButton token={token} />
+         <ChatWidget />
+         <button
+            type="button"
+            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+            onClick={sendChatMessage}
+         >
+            SEND CHAT MESSAGE
+         </button>
       </>
    );
 };
