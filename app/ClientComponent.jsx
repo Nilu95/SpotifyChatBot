@@ -17,7 +17,7 @@ const ClientComponent = () => {
    const [artistInfo, setArtistInfo] = useState(null);
    const [songName, setSongName] = useState(null);
    const openai = new OpenAI({
-      apiKey: "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",
+      apiKey: process.env.OPENAI_API_KEY,
       dangerouslyAllowBrowser: true,
    });
 
