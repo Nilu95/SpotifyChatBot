@@ -9,7 +9,7 @@ function ChatWidget() {
    // state variable to track modal visibility
    const [visible, setVisible] = useState(false);
    const widgetRef = useRef(null);
-   // use effect listener to check if the mouse was cliked outside the window
+   // use effect listener to check if the mouse was clicked outside the window
    useEffect(() => {
       function handleClickOutside(event) {
          if (widgetRef.current && !widgetRef.current.contains(event.target)) {
