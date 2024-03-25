@@ -10,7 +10,8 @@ function ModalWindow(props) {
             ...{ opacity: props.visible ? "1" : "0" },
          }}
       >
-         <span>Hello there!</span>
+         <label htmlFor="inputField">Input:</label>
+         <input type="text" id="inputField" />
       </div>
    );
 }

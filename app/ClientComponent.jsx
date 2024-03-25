@@ -26,8 +26,7 @@ const ClientComponent = () => {
          messages: [
             {
                role: "system",
-               content:
-                  "I'm calling you from the inside of a greater spotify project isn't that cool!?",
+               content: "Tell me about spotify",
             },
          ],
          model: "gpt-3.5-turbo",

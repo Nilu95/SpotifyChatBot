@@ -35,7 +35,7 @@ export const styles = {
       height: "65vh",
       maxWidth: "calc(100% - 48px)",
       maxHeight: "calc(100% - 48px)",
-      backgroundColor: "white",
+      backgroundColor: "grey",
       // Border
       borderRadius: "12px",
       border: `2px solid ${colors.primary}`,
