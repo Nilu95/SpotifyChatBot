@@ -11,8 +11,6 @@ import {
    TypingIndicator,
 } from "@chatscope/chat-ui-kit-react";
 
-const API_KEY = "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";
-
 function ModalWindow(props) {
    const [messages, setMessages] = useState([
       {
@@ -42,7 +40,6 @@ function ModalWindow(props) {
    async function processChatMessageToChatGPT(chatMessages) {
       let apiMessages = chatMessages.map((messageObject) => {
          let role = "";
-
          if (messageObject.sender === "ChatGPT") {
             role = "assistant";
          } else {
@@ -61,30 +58,36 @@ function ModalWindow(props) {
          messages: [systemMessage, ...apiMessages],
       };
 
-      await fetch("https://api.openai.com/v1/chat/completions", {
-         method: "POST",
-         headers: {
-            Authorization: "Bearer " + API_KEY,
-            "Content-Type": "application/json",
-         },
-         body: JSON.stringify(apiRequestBody),
-      })
-         .then((data) => {
-            return data.json();
-         })
-         .then((data) => {
-            console.log(data);
-            console.log(data.choices[0].message.content);
-            setMessages([
-               ...chatMessages,
-               {
-                  message: data.choices[0].message.content,
-                  sender: "ChatGPT",
-                  direction: "incoming",
-               },
-            ]);
-            setTyping(false);
+      try {
+         const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+               Authorization: "Bearer " + "REPLACE THIS WITH API KEY",
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify(apiRequestBody),
          });
+
+         if (!response.ok) {
+            throw new Error("Network response was not ok");
+         }
+
+         const data = await response.json();
+
+         setMessages([
+            ...chatMessages,
+            {
+               message: data.choices[0].message.content,
+               sender: "ChatGPT",
+               direction: "incoming",
+            },
+         ]);
+
+         setTyping(false);
+      } catch (error) {
+         console.error("There was a problem with the fetch operation:", error);
+         // Handle error gracefully, e.g., show a message to the user
+      }
    }
 
    // returning display
