@@ -30,12 +30,12 @@ export const styles = {
       bottom: "70px",
       right: "20px",
       // Size
-      width: "370px",
+      width: "500px",
       // width: "420px",
       height: "65vh",
       maxWidth: "calc(100% - 48px)",
       maxHeight: "calc(100% - 48px)",
-      backgroundColor: "grey",
+      backgroundColor: "darkgrey",
       // Border
       borderRadius: "12px",
       border: `2px solid ${colors.primary}`,

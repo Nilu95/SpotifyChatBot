@@ -1,7 +1,92 @@
 // importing external style
+import { useState } from "react";
 import { styles } from "./../styles";
-//for displaying the model view/Window
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import {
+   MainContainer,
+   ChatContainer,
+   MessageList,
+   Message,
+   MessageInput,
+   TypingIndicator,
+} from "@chatscope/chat-ui-kit-react";
+
+const API_KEY = "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";
+
 function ModalWindow(props) {
+   const [messages, setMessages] = useState([
+      {
+         message: "Hello, I am ChatGPT! Ask me anything!",
+         sentTime: "just now",
+         sender: "ChatGPT",
+         direction: "incoming",
+      },
+   ]);
+   const [typing, setTyping] = useState(false);
+
+   const handleSend = async (message) => {
+      const newMessage = {
+         message,
+         sender: "user",
+         direction: "outgoing",
+      };
+
+      const newMessages = [...messages, newMessage];
+
+      setMessages(newMessages);
+
+      setTyping(true);
+      await processChatMessageToChatGPT(newMessages);
+   };
+
+   async function processChatMessageToChatGPT(chatMessages) {
+      let apiMessages = chatMessages.map((messageObject) => {
+         let role = "";
+
+         if (messageObject.sender === "ChatGPT") {
+            role = "assistant";
+         } else {
+            role = "user";
+         }
+         return { role: role, content: messageObject.message };
+      });
+
+      const systemMessage = {
+         role: "system",
+         content: "Explain all concepts like I am 10 years old.",
+      };
+
+      const apiRequestBody = {
+         model: "gpt-3.5-turbo",
+         messages: [systemMessage, ...apiMessages],
+      };
+
+      await fetch("https://api.openai.com/v1/chat/completions", {
+         method: "POST",
+         headers: {
+            Authorization: "Bearer " + API_KEY,
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify(apiRequestBody),
+      })
+         .then((data) => {
+            return data.json();
+         })
+         .then((data) => {
+            console.log(data);
+            console.log(data.choices[0].message.content);
+            setMessages([
+               ...chatMessages,
+               {
+                  message: data.choices[0].message.content,
+                  sender: "ChatGPT",
+                  direction: "incoming",
+               },
+            ]);
+            setTyping(false);
+         });
+   }
+
    // returning display
    return (
       <div
@@ -10,8 +95,26 @@ function ModalWindow(props) {
             ...{ opacity: props.visible ? "1" : "0" },
          }}
       >
-         <label htmlFor="inputField">Input:</label>
-         <input type="text" id="inputField" />
+         <MainContainer>
+            <ChatContainer>
+               <MessageList
+                  scrollBehavior="smooth"
+                  typingIndicator={typing ? <TypingIndicator content="ChatGPT is typing" /> : null}
+               >
+                  {messages.map((message, i) => {
+                     return (
+                        <div
+                           key={i}
+                           style={{ textAlign: message.sender === "ChatGPT" ? "left" : "right" }}
+                        >
+                           <Message model={message} />
+                        </div>
+                     );
+                  })}
+               </MessageList>
+               <MessageInput placeholder="Type message here" onSend={handleSend} />
+            </ChatContainer>
+         </MainContainer>
       </div>
    );
 }
