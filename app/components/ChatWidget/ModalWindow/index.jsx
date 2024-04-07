@@ -62,7 +62,7 @@ function ModalWindow(props) {
          const response = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
             headers: {
-               Authorization: "Bearer " + "REPLACE THIS WITH API KEY",
+               Authorization: "Bearer " + process.env.NEXT_PUBLIC_OPENAI_API_KEY,
                "Content-Type": "application/json",
             },
             body: JSON.stringify(apiRequestBody),
@@ -122,3 +122,8 @@ function ModalWindow(props) {
    );
 }
 export default ModalWindow;
+
+/* 
+CREDIT: 
+Chat window: https://youtu.be/Lag9Pj_33hM
+*/
