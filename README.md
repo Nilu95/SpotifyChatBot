@@ -58,7 +58,17 @@ Setting up for chatbot
 
 https://openai.com/blog/introducing-chatgpt-and-whisper-apis 
 
-- 
+- Do to their API documentation 
+
+- On left-hand side, there will be a navigation menu
+
+- Select the API keys option 
+
+- Create your new secrete API key 
+
+- Add the screte key to the following value in your .env file:
+
+NEXT_PUBLIC_OPENAI_API_KEY
 
 ## Learn More
 
